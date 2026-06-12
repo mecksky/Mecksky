@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Movie App</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#141414;
+    color:white;
+}
+
+header{
+    background:#e50914;
+    padding:15px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+}
+
+.search-box{
+    text-align:center;
+    margin:20px;
+}
+
+input{
+    width:70%;
+    padding:10px;
+    border:none;
+    border-radius:5px;
+}
+
+button{
+    padding:10px 15px;
+    border:none;
+    border-radius:5px;
+    background:#e50914;
+    color:white;
+}
+
+.movies{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:15px;
+    padding:15px;
+}
+
+.movie{
+    background:#222;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.movie img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.movie-info{
+    padding:10px;
+}
+
+.movie-info h3{
+    margin:0 0 10px;
+    font-size:16px;
+}
+
+a{
+    display:inline-block;
+    margin-top:5px;
+    text-decoration:none;
+    color:white;
+    background:#e50914;
+    padding:8px 10px;
+    border-radius:5px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🎬 My Movie App</header>
+
+<div class="search-box">
+    <input type="text" id="search" placeholder="Search movie...">
+    <button onclick="searchMovie()">Search</button>
+</div>
+
+<div class="movies" id="movieList"></div>
+
+<script>
+
+const movies = [
+{
+title:"Fast & Furious 9",
+image:"https://via.placeholder.com/300x450?text=Fast+9",
+download:"#"
+},
+
+{
+title:"Avengers Endgame",
+image:"https://via.placeholder.com/300x450?text=Avengers",
+download:"#"
+},
+
+{
+title:"Spider-Man No Way Home",
+image:"https://via.placeholder.com/300x450?text=Spider-Man",
+download:"#"
+},
+
+{
+title:"Black Panther",
+image:"https://via.placeholder.com/300x450?text=Black+Panther",
+download:"#"
+},
+
+{
+title:"The Batman",
+image:"https://via.placeholder.com/300x450?text=Batman",
+download:"#"
+}
+];
+
+function displayMovies(list){
+    const container = document.getElementById("movieList");
+
+    container.innerHTML = "";
+
+    list.forEach(movie=>{
+        container.innerHTML += `
+        <div class="movie">
+            <img src="${movie.image}">
+            <div class="movie-info">
+                <h3>${movie.title}</h3>
+                <a href="${movie.download}">Download</a>
+            </div>
+        </div>
+        `;
+    });
+}
+
+function searchMovie(){
+    const text = document.getElementById("search").value.toLowerCase();
+
+    const filtered = movies.filter(movie =>
+        movie.title.toLowerCase().includes(text)
+    );
+
+    displayMovies(filtered);
+}
+
+displayMovies(movies);
+
+</script>
+
+</body>
+</html>

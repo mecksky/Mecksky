@@ -1,102 +1,77 @@
-// Admin credentials
-const admin = {
-    username: "admin",
-    password: "12345"
+
+// 🔥 Firebase CONFIG (WEKA YOUR OWN FROM FIREBASE)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXX",
+  appId: "XXXX"
 };
 
-// Users
-let users = JSON.parse(localStorage.getItem("users")) || [];
+firebase.initializeApp(firebaseConfig);
 
-// Movies
-let movies = JSON.parse(localStorage.getItem("movies")) || [
-{
-title:"Fast & Furious 9",
-image:"https://via.placeholder.com/300x450?text=Fast+9",
-download:"#"
-},
-{
-title:"Avengers Endgame",
-image:"https://via.placeholder.com/300x450?text=Avengers",
-download:"#"
+const auth = firebase.auth();
+const db = firebase.database();
+
+
+// 👤 REGISTER
+function register(){
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    auth.createUserWithEmailAndPassword(email, password)
+    .then(() => alert("Account created"))
+    .catch(err => alert(err.message));
 }
-];
 
-// Display movies
-function displayMovies(list){
+
+// 🔐 LOGIN
+function login(){
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    auth.signInWithEmailAndPassword(email, password)
+    .then(() => alert("Logged in"))
+    .catch(err => alert(err.message));
+}
+
+
+// 🎬 UPLOAD MOVIE (ADMIN)
+function uploadMovie(){
+    const title = document.getElementById("title").value;
+    const image = document.getElementById("image").value;
+    const video = document.getElementById("video").value;
+
+    const movieRef = db.ref("movies").push();
+
+    movieRef.set({
+        title,
+        image,
+        video
+    });
+
+    alert("Movie uploaded!");
+}
+
+
+// 📺 LOAD MOVIES
+db.ref("movies").on("value", snapshot => {
+    const data = snapshot.val();
     const container = document.getElementById("movieList");
 
     container.innerHTML = "";
 
-    list.forEach(movie=>{
+    for(let id in data){
         container.innerHTML += `
         <div class="movie">
-            <img src="${movie.image}">
+            <img src="${data[id].image}">
             <div class="movie-info">
-                <h3>${movie.title}</h3>
-                <a href="${movie.download}" download>Download</a>
+                <h3>${data[id].title}</h3>
+                <a href="${data[id].video}" target="_blank">▶ Watch</a>
             </div>
         </div>
         `;
-    });
-}
-
-// Search
-function searchMovie(){
-    const text = document.getElementById("search").value.toLowerCase();
-
-    const filtered = movies.filter(movie =>
-        movie.title.toLowerCase().includes(text)
-    );
-
-    displayMovies(filtered);
-}
-
-// Register User
-function registerUser(username, password){
-    users.push({username, password});
-    localStorage.setItem("users", JSON.stringify(users));
-    alert("Account created successfully");
-}
-
-// User Login
-function loginUser(username, password){
-    const found = users.find(user =>
-        user.username === username &&
-        user.password === password
-    );
-
-    if(found){
-        alert("User login successful");
-    } else {
-        alert("Invalid user credentials");
     }
-}
-
-// Admin Login
-function loginAdmin(username, password){
-    if(
-        username === admin.username &&
-        password === admin.password
-    ){
-        alert("Welcome Administrator");
-    } else {
-        alert("Invalid admin credentials");
-    }
-}
-
-// Add Movie (Admin only)
-function addMovie(title, image, download){
-    movies.push({
-        title,
-        image,
-        download
-    });
-
-    localStorage.setItem("movies", JSON.stringify(movies));
-
-    displayMovies(movies);
-
-    alert("Movie uploaded successfully");
-}
-
-displayMovies(movies);
+});
